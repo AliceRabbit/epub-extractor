@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>EPUB提取</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .form-control {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card p-4">
+        <h1 class="text-center mb-4">EPUB提取</h1>
+        <form action="/extract" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label" for="file">上传文件</label>
+                <input class="form-control" type="file" name="file" id="file" required>
+                <input class="form-control" type="hidden" id="filename" name="filename">
+            </div>
+            <button class="btn btn-primary w-100" type="submit">提取</button>
+        </form>
+    </div>
+</div>
+<script>
+    const fileInput = document.getElementById("file");
+    const filenameInput = document.getElementById("filename");
+    fileInput.addEventListener("change", () => {
+        filenameInput.value = fileInput.files[0].name.replace(/\.[^/.]+$/, "");
+    });
+</script>
+</body>
+</html>
