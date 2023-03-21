@@ -26,7 +26,6 @@ func extractText(epubName string, r io.Reader) {
 	var text string
 	for _, p := range doc.FindElements("//p") {
 		text += extractTextFromElement(p)
-		// text += "\n"
 	}
 
 	// 保存到text.txt文件中
