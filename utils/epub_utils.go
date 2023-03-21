@@ -25,7 +25,8 @@ func extractText(epubName string, r io.Reader) {
 	// 提取所有p标签的文本
 	var text string
 	for _, p := range doc.FindElements("//p") {
-		text += p.Text() + "\n"
+		text += extractTextFromElement(p)
+		// text += "\n"
 	}
 
 	// 保存到text.txt文件中
@@ -150,4 +151,13 @@ func deleteFileIfExists(filename string) error {
 
 	// 文件存在，删除文件
 	return os.Remove(filename)
+}
+
+func extractTextFromElement(elem *etree.Element) string {
+	text := elem.Text()
+	for _, child := range elem.ChildElements() {
+		text += extractTextFromElement(child)
+	}
+	text += elem.Tail()
+	return text
 }
