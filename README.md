@@ -25,7 +25,7 @@ go build
 ```bash
 ./epub-extractor
 ```
-打开Web浏览器，访问http://localhost:8080，上传EPUB文件并进行提取。
+打开Web浏览器，访问http://localhost:8080 ，上传EPUB文件并进行提取。
 
 ## 注意事项
 目前，此工具仅能提取.epub格式的文件，其他格式的文件将被忽略。
