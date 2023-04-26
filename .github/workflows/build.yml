@@ -6,31 +6,45 @@ on:
       - 'v*'
 
 jobs:
-  build:
-    name: Build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-        go-version: [1.19.x]
+  build-windows:
+    name: Build for Windows
+    runs-on: windows-latest
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: 1.19.x
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build
-        run: go build -v -o epub-extractor-${{ matrix.os }} .
-      - name: Upload artifacts
+        run: go build -o epub-extractor-windows-latest.exe .
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: epub-extractor-${{ matrix.os }}
-          path: epub-extractor-${{ matrix.os }}
+          name: epub-extractor-windows-latest.exe
+          path: epub-extractor-windows-latest.exe
+
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19.x
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build
+        run: go build -o epub-extractor-ubuntu-latest .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: epub-extractor-ubuntu-latest
+          path: epub-extractor-ubuntu-latest
 
   release:
     name: Release
-    needs: build
+    needs: [build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -52,9 +66,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./epub-extractor-windows-latest
-          asset_name: epub-extractor-windows-latest.exe
-          asset_content_type: application/octet-stream
+          asset_path: ./epub-extractor-windows-latest.exe/epub-extractor-windows-latest.exe # artifact folder/file name 
+          asset_name: epub-extractor-windows-latest.exe # file name for release asset 
+          asset_content_type: application/octet-stream # MIME type of the file 
       - name: Upload Release Asset for Linux
         id: upload-release-asset-linux
         uses: actions/upload-release-asset@v1
@@ -62,6 +76,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./epub-extractor-ubuntu-latest
-          asset_name: epub-extractor-ubuntu-latest
-          asset_content_type: application/octet-stream
+          asset_path: ./epub-extractor-ubuntu-latest/epub-extractor-ubuntu-latest # artifact folder/file name 
+          asset_name: epub-extractor-ubuntu-latest # file name for release asset 
+          asset_content_type: application/octet-stream # MIME type of the file 
