@@ -1,81 +1,21 @@
-name: Go Build and Release
-
-on:
-  push:
-    tags:
-      - 'v*'
-
-jobs:
-  build-windows:
-    name: Build for Windows
-    runs-on: windows-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.19.x
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Build
-        run: go build -o epub-extractor-windows-latest.exe .
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: epub-extractor-windows-latest.exe
-          path: epub-extractor-windows-latest.exe
-
-  build-linux:
-    name: Build for Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.19.x
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Build
-        run: go build -o epub-extractor-ubuntu-latest .
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: epub-extractor-ubuntu-latest
-          path: epub-extractor-ubuntu-latest
-
-  release:
-    name: Release
-    needs: [build-windows, build-linux]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset for Windows
-        id: upload-release-asset-windows
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./epub-extractor-windows-latest.exe/epub-extractor-windows-latest.exe # artifact folder/file name 
-          asset_name: epub-extractor-windows-latest.exe # file name for release asset 
-          asset_content_type: application/octet-stream # MIME type of the file 
-      - name: Upload Release Asset for Linux
-        id: upload-release-asset-linux
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./epub-extractor-ubuntu-latest/epub-extractor-ubuntu-latest # artifact folder/file name 
-          asset_name: epub-extractor-ubuntu-latest # file name for release asset 
-          asset_content_type: application/octet-stream # MIME type of the file 
+name: go-crossbuild
+  # You may pin to the exact commit or the version.
+  # uses: izumin5210/action-go-crossbuild@77788a44756d2fd2ba1eb9a4252b471397c63ffc
+  uses: izumin5210/action-go-crossbuild@v1.0.0
+  with:
+    # An application name
+    name: epub-extractor # optional, default is 
+    # Space or comma separated list of GOARCH
+    arch: # optional, default is amd64
+    # Path to destination directory of built binaries
+    dest: # optional, default is ./dist
+    # `-ldflags` to pass to go build
+    ldflags: # optional, default is 
+    # `-tags` to pass to go build
+    tags: # optional, default is 
+    # Space or comma separated list of GOOS
+    os: # optional, default is darwin,linux,windows
+    # Build target package
+    package: # optional, default is .
+    # Version of github.com/Songmu/goxz
+    goxz-version: # optional, default is v0.4.1
